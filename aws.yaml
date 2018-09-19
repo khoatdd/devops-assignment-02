@@ -1,0 +1,63 @@
+swagger: '2.0'
+info:
+  description: List all AWS EC2 instance with match State
+  version: 1.0.0
+  title: Inspectorio DevOps Assignment API
+  contact:
+    email: devops@inspectorio.com
+paths:
+  /healthz:
+    get:
+      summary: Health Check
+      description: The healthcheck endpoint provides detailed information about the health of a service.
+      produces:
+      - application/json
+      responses:
+        200:
+          description: Health Check report
+          examples:
+            application/json: |-
+              {
+                "status": "OK"
+              }
+        503:
+          description: Unhealthy Service
+          examples:
+            application/json: |-
+              {
+                "status": "SOS"
+              }
+  /ec2:
+    post:
+      summary: List AWS EC2 instances
+      operationId: getEc2Instances
+      description: Get all EC2 instances in one region with match state
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        name: AwsInfo
+        description: Request body
+        schema:
+          $ref: '#/definitions/AwsInfo'
+      responses:
+        200:
+          description: json array contain EC2 instances
+definitions:
+  AwsInfo:
+    type: object
+    required:
+    - region
+    - state
+    properties:
+      region:
+        type: string
+        example: us-east-1
+      state:
+        type: string
+        example: Running
+        
+schemes:
+ - https
