@@ -42,6 +42,3 @@ def list_aws_ec2_instances():
         response = Response(json.dumps(err_message),
                             status=400, mimetype='application/json')
         return response
-
-if __name__ == "__main__":
-    app.run(ssl_context='adhoc')
