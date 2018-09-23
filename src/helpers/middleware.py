@@ -50,4 +50,5 @@ def setup_metrics(app):
 
     @app.route('/metrics')
     def metrics():
-        return Response(prometheus_client.generate_latest(registry), mimetype=CONTENT_TYPE_LATEST)
+        return Response(prometheus_client.generate_latest(registry),
+                        mimetype=CONTENT_TYPE_LATEST)

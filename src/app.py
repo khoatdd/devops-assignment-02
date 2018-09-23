@@ -33,14 +33,15 @@ def handle_health_check(error):
 @app.route("/healthz", methods=['GET'])
 def health_check():
     try:
-        ec2 = boto3.resource('ec2', aws_access_key_id=aws_access_key_id,
-                             aws_secret_access_key=aws_secret_access_key, region_name="us-east-1")
+        ec2 = boto3.resource(
+            'ec2',
+            aws_access_key_id=aws_access_key_id,
+            aws_secret_access_key=aws_secret_access_key,
+            region_name="us-east-1")
         instances = ec2.instances.filter(
             Filters=[{'Name': 'instance-state-name', 'Values': ['stopped']}])
-
         for instance in instances:
             print instance.id
-
         response = Response(json.dumps({'status': 'OK'}), status=200,
                             mimetype='application/json')
         return response
@@ -54,23 +55,27 @@ def list_aws_ec2_instances():
     if (valid_request_data(request_data)):
         region_name = request_data['region'].lower()
         state = request_data['state'].lower()
-        ec2 = boto3.resource('ec2', aws_access_key_id=aws_access_key_id,
-                             aws_secret_access_key=aws_secret_access_key, region_name=region_name)
-        instances = ec2.instances.filter(
-            Filters=[{'Name': 'instance-state-name', 'Values': [state]}])
-
-        array = []
-
-        for instance in instances:
-            array.append(instance.id)
-
+        try:
+            ec2 = boto3.resource('ec2',
+                                 aws_access_key_id=aws_access_key_id,
+                                 aws_secret_access_key=aws_secret_access_key,
+                                 region_name=region_name)
+            instances = ec2.instances.filter(
+                Filters=[{'Name': 'instance-state-name', 'Values': [state]}])
+            array = []
+            for instance in instances:
+                array.append(instance.id)
+        except Exception:
+            pass
         response = Response(json.dumps(array), status=200,
                             mimetype='application/json')
         return response
     else:
         err_message = {
             "error": "Invalid request body",
-            "helpString": "Data passed in similar to this {'region': '<region_name>', 'state': '<instance_state>'}"
+            "helpString": "Data passed in similar to this \
+                           {'region': '<region_name>', \
+                           'state': '<instance_state>'}"
         }
         response = Response(json.dumps(err_message),
                             status=400, mimetype='application/json')
