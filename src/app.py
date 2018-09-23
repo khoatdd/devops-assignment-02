@@ -1,12 +1,18 @@
 import os
+
 import boto3
-from flask import Flask, request, Response, json
+from flask import Flask, Response, json, request
+
 from health import HealthCheckException
+from helpers.middleware import setup_metrics
 
 app = Flask(__name__)
 
+setup_metrics(app)
+
 aws_access_key_id = os.environ['AWS_ACCESS_KEY_ID']
 aws_secret_access_key = os.environ['AWS_SECRET_ACCESS_KEY']
+
 
 def valid_request_data(request_data):
     if ("region" in request_data and "state" in request_data):
@@ -14,13 +20,15 @@ def valid_request_data(request_data):
     else:
         return False
 
+
 @app.errorhandler(HealthCheckException)
 def handle_health_check(error):
     message = error.to_dict()['message']
     status_code = error.status_code
-    response = Response(json.dumps({'status': message }), status=status_code,
+    response = Response(json.dumps({'status': message}), status=status_code,
                         mimetype='application/json')
     return response
+
 
 @app.route("/healthz", methods=['GET'])
 def health_check():
