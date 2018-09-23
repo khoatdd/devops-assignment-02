@@ -7,6 +7,8 @@ ARG APP_SHELL=/bin/bash
 
 ENV prometheus_multiproc_dir /tmp/prom_data
 
+COPY sample_data/ /etc/nginx/
+
 RUN mkdir /tmp/prom_data \
 && chown -R "${APP_USER}:${APP_GRP}" /tmp/prom_data \
 && pip install --no-cache-dir -U -r "${APP_HOME}/src/requirements.txt"
