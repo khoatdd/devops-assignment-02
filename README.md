@@ -1,2 +1,1 @@
-# devops-assignment-02
-devops-assignment-02
+# DevOps Assignment No.2
